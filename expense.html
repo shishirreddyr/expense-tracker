@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Expense Tracker</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#1d2671,#c33764);
+}
+
+.container{
+    width:350px;
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.3);
+    animation:fadeIn 1s ease;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    margin-bottom:15px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    color:white;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.add{ background:#4CAF50; }
+.view{ background:#2196F3; }
+.reset{ background:#FF9800; }
+.exit{ background:#f44336; }
+
+#output{
+    margin-top:15px;
+    font-weight:bold;
+    animation:pop 0.4s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes pop{
+    from{transform:scale(0.8); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="app">
+    <h1>💰 Expense Tracker</h1>
+
+    <input type="number" id="amount" placeholder="Enter expense amount">
+
+    <button class="add" onclick="addExpense()">Add Expense</button>
+    <button class="view" onclick="viewTotal()">View Total Expense</button>
+    <button class="reset" onclick="resetExpense()">Reset Amount</button>
+    <button class="exit" onclick="exitApp()">Exit</button>
+
+    <p id="output"></p>
+</div>
+
+<script>
+let expense = [];
+
+function addExpense(){
+    let amount = document.getElementById("amount").value;
+
+    if(amount === ""){
+        show("Enter a valid amount ❌");
+        return;
+    }
+
+    expense.push(Number(amount));
+    document.getElementById("amount").value="";
+    show("Expense added successfully ✅");
+}
+
+function viewTotal(){
+    let total = expense.reduce((a,b)=>a+b,0);
+    show("Total Expense: ₹ " + total);
+}
+
+function resetExpense(){
+    expense = [];
+    show("Expense reset successfully 🔄");
+}
+
+function exitApp(){
+    document.getElementById("app").innerHTML =
+        "<h1>👋 Exited Successfully</h1>";
+}
+
+function show(msg){
+    let out=document.getElementById("output");
+    out.innerText=msg;
+    out.style.animation="none";
+    out.offsetHeight;
+    out.style.animation="pop 0.4s ease";
+}
+</script>
+
+</body>
+</html>
