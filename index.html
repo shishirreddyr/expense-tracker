@@ -1,240 +1,195 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Expense Tracker</title>
-
+<title>Expense Tracker with Categories</title>
 <style>
-*{ box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
-
+*{font-family:Segoe UI;box-sizing:border-box;}
 body{
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#1d2671,#c33764);
-    transition:0.4s;
+  margin:0;height:100vh;display:flex;justify-content:center;align-items:center;
+  background:linear-gradient(135deg,#1d2671,#c33764);transition:0.4s;
 }
-
-body.dark{
-    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-}
-
+body.dark{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);}
 .container{
-    width:430px;
-    background:white;
-    padding:25px;
-    border-radius:18px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.3);
-    transition:0.4s;
-    text-align:center;
+  width:480px;background:white;padding:25px;border-radius:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);transition:0.4s;text-align:center;
 }
-
-body.dark .container{
-    background:#1e1e1e;
-    color:white;
+body.dark .container{background:#1e1e1e;color:white;}
+input,select,button{
+  width:100%;padding:10px;margin:6px 0;border-radius:8px;
 }
-
-input{
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-body.dark input{
-    background:#333;
-    color:white;
-    border:1px solid #555;
-}
-
-button{
-    width:100%;
-    padding:12px;
-    margin:6px 0;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    color:white;
-    font-size:15px;
-}
-
-.add{background:#4CAF50;}
-.view{background:#2196F3;}
-.export{background:#9C27B0;}
-.toggle{background:#607D8B;}
-.reset{background:#FF9800;}
-.exit{background:#f44336;}
-.login{background:#3F51B5;}
-
-ul{
-    list-style:none;
-    padding:0;
-    max-height:170px;
-    overflow-y:auto;
-    text-align:left;
-}
-
-li{
-    background:#f4f4f4;
-    margin:6px 0;
-    padding:10px;
-    border-radius:6px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-body.dark li{ background:#2f2f2f; }
-
-.actions button{
-    width:auto;
-    margin-left:5px;
-    padding:6px 10px;
-    font-size:13px;
-}
-
-.edit{background:#009688;}
-.del{background:#f44336;}
-
-#output{ font-weight:bold; margin-top:10px; }
+body.dark input,body.dark select{background:#333;color:white;border:1px solid #555;}
+button{border:none;color:white;cursor:pointer;font-size:14px;}
+.signup{background:#3F51B5;} .login{background:#009688;}
+.add{background:#4CAF50;} .reset{background:#FF9800;}
+.export{background:#9C27B0;} .toggle{background:#607D8B;}
+.logout{background:#f44336;} .edit{background:#009688;} .del{background:#f44336;}
+ul{list-style:none;padding:0;max-height:170px;overflow:auto;}
+li{background:#f4f4f4;margin:6px 0;padding:8px;border-radius:6px;
+display:flex;justify-content:space-between;align-items:center;}
+body.dark li{background:#2f2f2f;}
+.actions button{margin-left:5px;padding:5px 8px;font-size:12px;}
+canvas{margin-top:15px;}
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN PAGE -->
-<div class="container" id="loginBox">
-    <h2>🔐 Login</h2>
-    <input id="user" placeholder="Username">
-    <input id="pass" type="password" placeholder="Password">
-    <button class="login" onclick="login()">Login</button>
-    <p id="loginMsg"></p>
+<!-- AUTH -->
+<div class="container" id="auth">
+<h2>🔐 Signup / Login</h2>
+<input id="su" placeholder="Username">
+<input id="sp" type="password" placeholder="Password">
+<button class="signup" onclick="signup()">Signup</button>
+<button class="login" onclick="login()">Login</button>
+<p id="authMsg"></p>
 </div>
 
-<!-- APP PAGE -->
+<!-- APP -->
 <div class="container" id="app" style="display:none;">
-    <h1>💰 Expense Tracker</h1>
+<h2>💰 Expense Tracker</h2>
 
-    <input type="number" id="amount" placeholder="Enter expense amount">
+<input type="number" id="amount" placeholder="Enter amount">
+<select id="category">
+<option value="" disabled selected>Select category</option>
+<option>Food</option>
+<option>Transport</option>
+<option>Bills</option>
+<option>Shopping</option>
+<option>Entertainment</option>
+<option>Others</option>
+</select>
+<input type="text" id="customCat" placeholder="Add custom category (optional)">
 
-    <button class="add" onclick="addExpense()">Add Expense</button>
-    <button class="view" onclick="viewTotal()">View Total</button>
-    <button class="export" onclick="exportExcel()">Export to Excel</button>
-    <button class="toggle" onclick="toggleDark()">Dark Mode</button>
-    <button class="reset" onclick="resetExpense()">Reset All</button>
-    <button class="exit" onclick="logout()">Logout</button>
+<button class="add" onclick="addExpense()">Add Expense</button>
+<button class="export" onclick="exportExcel()">Export Excel</button>
+<button class="toggle" onclick="toggleDark()">Dark Mode</button>
+<button class="reset" onclick="resetAll()">Reset All</button>
+<button class="logout" onclick="logout()">Logout</button>
 
-    <p id="output"></p>
-    <ul id="expenseList"></ul>
+<p id="output"></p>
+<ul id="list"></ul>
+
+<canvas id="barChart" width="400" height="200"></canvas>
+<canvas id="pieChart" width="400" height="200"></canvas>
 </div>
 
 <script>
-let expense = JSON.parse(localStorage.getItem("expenses")) || [];
-let dark = localStorage.getItem("dark") === "true";
+// Users & session
+let users = JSON.parse(localStorage.getItem("users"))||{};
+let expenses = JSON.parse(localStorage.getItem("expenses"))||[];
+let dark = localStorage.getItem("dark")==="true";
 
 if(dark) document.body.classList.add("dark");
+if(localStorage.getItem("session")) showApp();
 
-if(localStorage.getItem("logged") === "true"){
-    showApp();
+// Signup/Login
+function signup(){
+  if(su.value && sp.value){
+    users[su.value]=sp.value;
+    localStorage.setItem("users",JSON.stringify(users));
+    authMsg.innerText="Signup successful ✅";
+  }
 }
-
 function login(){
-    let u=user.value, p=pass.value;
-    if(u && p){
-        localStorage.setItem("logged","true");
-        showApp();
-    }else{
-        loginMsg.innerText="Invalid credentials ❌";
-    }
+  if(users[su.value]===sp.value){
+    localStorage.setItem("session",su.value);
+    showApp();
+  }else authMsg.innerText="Invalid login ❌";
 }
-
 function logout(){
-    localStorage.removeItem("logged");
-    location.reload();
+  localStorage.removeItem("session");
+  location.reload();
 }
 
+// App Functions
 function showApp(){
-    loginBox.style.display="none";
-    app.style.display="block";
-    renderList();
+  auth.style.display="none";
+  app.style.display="block";
+  render();
 }
 
-function save(){
-    localStorage.setItem("expenses",JSON.stringify(expense));
-}
+function save(){ localStorage.setItem("expenses",JSON.stringify(expenses)); }
 
 function addExpense(){
-    let amt=amount.value;
-    if(amt<=0){ show("Invalid amount ❌"); return; }
-
-    expense.push({
-        amount:Number(amt),
-        time:new Date().toLocaleString()
-    });
-    save(); renderList();
-    amount.value="";
-    show("Expense added ✅");
+  let amt=Number(amount.value);
+  let cat=customCat.value.trim()||category.value;
+  if(!amt || !cat){show("Enter amount and category ❌");return;}
+  expenses.push({amt,time:new Date().toLocaleString(),cat});
+  save();render();amount.value="";customCat.value="";category.value="";
+  show("Expense added ✅");
 }
 
 function editExpense(i){
-    let newAmt=prompt("Edit amount:",expense[i].amount);
-    if(newAmt && newAmt>0){
-        expense[i].amount=Number(newAmt);
-        save(); renderList();
-        show("Expense updated ✏️");
-    }
+  let newAmt=prompt("Edit amount:",expenses[i].amt);
+  let newCat=prompt("Edit category:",expenses[i].cat);
+  if(newAmt && newCat){
+    expenses[i].amt=Number(newAmt); expenses[i].cat=newCat;
+    save();render(); show("Expense updated ✏️");
+  }
 }
 
-function deleteExpense(i){
-    expense.splice(i,1);
-    save(); renderList();
-    show("Expense deleted 🗑️");
-}
+function deleteExpense(i){ expenses.splice(i,1); save();render(); show("Expense deleted 🗑️"); }
 
-function viewTotal(){
-    let total=expense.reduce((s,e)=>s+e.amount,0);
-    show("Total Expense: ₹ "+total);
-}
-
-function resetExpense(){
-    expense=[];
-    save(); renderList();
-    show("All expenses cleared 🔄");
-}
+function resetAll(){ expenses=[]; save(); render(); show("All expenses cleared 🔄"); }
 
 function exportExcel(){
-    let csv="Amount,Date & Time\n";
-    expense.forEach(e=>csv+=`${e.amount},${e.time}\n`);
-    let blob=new Blob([csv],{type:"text/csv"});
-    let a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download="expenses.csv";
-    a.click();
+  if(expenses.length===0){show("No data ❌");return;}
+  let csv="Amount,Category,Time\n";
+  expenses.forEach(e=>csv+=`${e.amt},${e.cat},${e.time}\n`);
+  let a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv]));
+  a.download="expenses.csv"; a.click();
 }
 
 function toggleDark(){
-    document.body.classList.toggle("dark");
-    localStorage.setItem("dark",document.body.classList.contains("dark"));
+  document.body.classList.toggle("dark");
+  localStorage.setItem("dark",document.body.classList.contains("dark"));
 }
 
-function renderList(){
-    expenseList.innerHTML="";
-    expense.forEach((e,i)=>{
-        expenseList.innerHTML+=`
-        <li>
-            <div>₹${e.amount}<br><small>${e.time}</small></div>
-            <div class="actions">
-                <button class="edit" onclick="editExpense(${i})">✏️</button>
-                <button class="del" onclick="deleteExpense(${i})">❌</button>
-            </div>
-        </li>`;
-    });
+// Render list + charts
+function render(){
+  list.innerHTML="";
+  expenses.forEach((e,i)=>{
+    list.innerHTML+=`<li>
+      ₹${e.amt} - ${e.cat}<br><small>${e.time}</small>
+      <div class="actions">
+        <button class="edit" onclick="editExpense(${i})">✏️</button>
+        <button class="del" onclick="deleteExpense(${i})">❌</button>
+      </div>
+    </li>`;
+  });
+  drawBarChart(); drawPieChart();
+  show(`Total: ₹${expenses.reduce((s,e)=>s+e.amt,0)}`);
 }
 
-function show(msg){ output.innerText=msg; }
+// Charts
+function drawBarChart(){
+  let c=document.getElementById("barChart"); let ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  let max=Math.max(...expenses.map(e=>e.amt),1);
+  expenses.forEach((e,i)=>{
+    let h=(e.amt/max)*150;
+    ctx.fillStyle="#4CAF50"; ctx.fillRect(i*40+20,180-h,30,h);
+    ctx.fillStyle="black"; ctx.fillText(e.amt,i*40+20,180-h-5);
+  });
+}
+function drawPieChart(){
+  let c=document.getElementById("pieChart"); let ctx=c.getContext("2d"); ctx.clearRect(0,0,c.width,c.height);
+  let catTotals={};
+  expenses.forEach(e=>catTotals[e.cat]=(catTotals[e.cat]||0)+e.amt);
+  let total=Object.values(catTotals).reduce((a,b)=>a+b,0);
+  let start=0; let colors=["#4CAF50","#2196F3","#FF9800","#9C27B0","#607D8B","#f44336","#009688"];
+  let i=0;
+  for(let cat in catTotals){
+    let slice=(catTotals[cat]/total)*2*Math.PI;
+    ctx.beginPath(); ctx.moveTo(200,100);
+    ctx.fillStyle=colors[i++ % colors.length];
+    ctx.arc(200,100,80,start,start+slice);
+    ctx.fill(); start+=slice;
+  }
+}
+
+// Show message
+function show(msg){output.innerText=msg;}
 </script>
-
 </body>
 </html>
