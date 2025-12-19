@@ -30,6 +30,69 @@ display:flex;justify-content:space-between;align-items:center;}
 body.dark li{background:#2f2f2f;}
 .actions button{margin-left:5px;padding:5px 8px;font-size:12px;}
 canvas{margin-top:15px;}
+
+/* Responsive Landscape & Mobile View */
+body {
+  flex-direction: column; /* default portrait/desktop stacking */
+  padding: 10px;
+}
+
+/* Landscape layout: list + charts side by side */
+@media (min-width: 500px) and (orientation: landscape) {
+  #app {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  /* Left side: inputs and expense list */
+  #app > input,
+  #app > select,
+  #app > button,
+  #output,
+  #list {
+    width: 48%; /* take half width */
+    margin-right: 2%;
+  }
+
+  #list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  /* Right side: charts stacked */
+  #barChart, #pieChart {
+    width: 48%;
+    height: auto;
+    margin: 10px 0;
+  }
+}
+
+/* Ensure smaller mobile devices stay stacked */
+@media (max-width: 500px) {
+  #app {
+    display: block;
+  }
+  #app > input,
+  #app > select,
+  #app > button,
+  #output,
+  #list,
+  #barChart,
+  #pieChart {
+    width: 100%;
+    margin: 5px 0;
+  }
+  #list {
+    max-height: 120px;
+  }
+  .actions button {
+    margin-left: 3px;
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+}
 </style>
 </head>
 <body>
