@@ -33,7 +33,7 @@ canvas{margin-top:15px;}
 
 /* Responsive Landscape & Mobile View */
 body {
-  flex-direction: column; /* default portrait/desktop stacking */
+  flex-direction: column;
   padding: 10px;
 }
 
@@ -52,7 +52,7 @@ body {
   #app > button,
   #output,
   #list {
-    width: 48%; /* take half width */
+    width: 48%;
     margin-right: 2%;
   }
 
@@ -61,7 +61,13 @@ body {
     overflow-y: auto;
   }
 
-  /* Right side: charts stacked */
+  /* Right side: charts side by side */
+  #chartsContainer {
+    display: flex;
+    width: 48%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
   #barChart, #pieChart {
     width: 48%;
     height: auto;
@@ -69,7 +75,7 @@ body {
   }
 }
 
-/* Ensure smaller mobile devices stay stacked */
+/* Mobile stacking */
 @media (max-width: 500px) {
   #app {
     display: block;
@@ -132,8 +138,12 @@ body {
 <p id="output"></p>
 <ul id="list"></ul>
 
+<!-- Charts container -->
+<div id="chartsContainer">
 <canvas id="barChart" width="400" height="200"></canvas>
 <canvas id="pieChart" width="400" height="200"></canvas>
+</div>
+
 </div>
 
 <script>
@@ -228,24 +238,29 @@ function render(){
 function drawBarChart(){
   let c=document.getElementById("barChart"); let ctx=c.getContext("2d");
   ctx.clearRect(0,0,c.width,c.height);
+
+  // category colors matching pie chart
+  let catColors={"Food":"#4CAF50","Transport":"#2196F3","Bills":"#FF9800","Shopping":"#9C27B0","Entertainment":"#607D8B","Others":"#f44336"};
   let max=Math.max(...expenses.map(e=>e.amt),1);
   expenses.forEach((e,i)=>{
     let h=(e.amt/max)*150;
-    ctx.fillStyle="#4CAF50"; ctx.fillRect(i*40+20,180-h,30,h);
+    ctx.fillStyle=catColors[e.cat] || "#009688";
+    ctx.fillRect(i*40+20,180-h,30,h);
     ctx.fillStyle="black"; ctx.fillText(e.amt,i*40+20,180-h-5);
   });
 }
+
 function drawPieChart(){
   let c=document.getElementById("pieChart"); let ctx=c.getContext("2d"); ctx.clearRect(0,0,c.width,c.height);
   let catTotals={};
   expenses.forEach(e=>catTotals[e.cat]=(catTotals[e.cat]||0)+e.amt);
   let total=Object.values(catTotals).reduce((a,b)=>a+b,0);
-  let start=0; let colors=["#4CAF50","#2196F3","#FF9800","#9C27B0","#607D8B","#f44336","#009688"];
-  let i=0;
+  let start=0; 
+  let colors={"Food":"#4CAF50","Transport":"#2196F3","Bills":"#FF9800","Shopping":"#9C27B0","Entertainment":"#607D8B","Others":"#f44336"};
   for(let cat in catTotals){
     let slice=(catTotals[cat]/total)*2*Math.PI;
     ctx.beginPath(); ctx.moveTo(200,100);
-    ctx.fillStyle=colors[i++ % colors.length];
+    ctx.fillStyle=colors[cat] || "#009688";
     ctx.arc(200,100,80,start,start+slice);
     ctx.fill(); start+=slice;
   }
